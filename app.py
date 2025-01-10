@@ -73,6 +73,20 @@ def supervise_response(generated_answer: str) -> str:
 
 # --- Streamlit アプリ -------------------------------------------------------- #
 def main():
+    # パスワード保護の追加
+    if "authenticated" not in st.session_state:
+        st.session_state["authenticated"] = False
+
+    if not st.session_state["authenticated"]:
+        password = st.text_input("パスワードを入力してください", type="password")
+        if password == os.environ.get("PASSWORD", "default-password"):
+            st.session_state["authenticated"] = True
+            st.rerun()
+        elif password:  # パスワードが入力されている場合のみエラーを表示
+            st.error("パスワードが正しくありません")
+            return
+
+    # 認証後の既存のコード
     st.title("AI先生(仮)")
 
     # チャットの履歴をセッションに保存
