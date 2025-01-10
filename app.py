@@ -84,38 +84,39 @@ def main():
             st.rerun()
         elif password:  # パスワードが入力されている場合のみエラーを表示
             st.error("パスワードが正しくありません")
-            return
+            st.rerun
 
-    # 認証後の既存のコード
-    st.title("AI先生(仮)")
+    if st.session_state["authenticated"]:
+        # 認証後の既存のコード
+        st.title("AI先生(仮)")
 
-    # チャットの履歴をセッションに保存
-    if "history" not in st.session_state:
-        st.session_state["history"] = []
+        # チャットの履歴をセッションに保存
+        if "history" not in st.session_state:
+            st.session_state["history"] = []
 
-    # ユャット履歴を表示
-    for msg in st.session_state["history"]:
-        with st.chat_message(msg["role"]):
-            st.write(msg["content"])
+        # ユャット履歴を表示
+        for msg in st.session_state["history"]:
+            with st.chat_message(msg["role"]):
+                st.write(msg["content"])
 
-    # チャット入力
-    if prompt := st.chat_input("質問を入力してください"):
-        # ユーザーメッセージを表示
-        with st.chat_message("user"):
-            st.write(prompt)
+        # チャット入力
+        if prompt := st.chat_input("質問を入力してください"):
+            # ユーザーメッセージを表示
+            with st.chat_message("user"):
+                st.write(prompt)
 
-        # アシスタントの応答を処理
-        with st.chat_message("assistant"):
-            with st.status("考え中...", expanded=True) as status:
-                st.write("🤔 回答を生成しています...")
-                # 1. 回答生成
-                generated = generate_response(prompt)
-                status.update(label="完了！", state="complete", expanded=False)
-            st.write(generated)
+            # アシスタントの応答を処理
+            with st.chat_message("assistant"):
+                with st.status("考え中...", expanded=True) as status:
+                    st.write("🤔 回答を生成しています...")
+                    # 1. 回答生成
+                    generated = generate_response(prompt)
+                    status.update(label="完了！", state="complete", expanded=False)
+                st.write(generated)
 
-        # 履歴に追加（アシスタントの応答も保存）
-        st.session_state["history"].append({"role": "user", "content": prompt})
-        st.session_state["history"].append({"role": "assistant", "content": generated})
+            # 履歴に追加（アシスタントの応答も保存）
+            st.session_state["history"].append({"role": "user", "content": prompt})
+            st.session_state["history"].append({"role": "assistant", "content": generated})
 
 if __name__ == "__main__":
     main()
